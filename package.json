@@ -13,6 +13,7 @@
     "test:auth:smoke": "node authenticated_smoke_check.mjs",
     "test:website:auto": "node website_qa_runner.mjs",
     "test:azdo:suites": "node azure_suite_runner.mjs",
+    "generate:training-planner:azdo": "node scripts/generate-training-planner-azdo.mjs",
     "migrate:test-cases": "node scripts/migrate-test-cases-to-steps.mjs"
   },
   "dependencies": {

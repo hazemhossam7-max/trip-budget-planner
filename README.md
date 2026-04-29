@@ -138,6 +138,25 @@ Run the auth-aware website runner:
 npm run test:website:auto -- https://the360insights.ai/
 ```
 
+Generate a focused Training Planner suite in Azure DevOps:
+
+```bash
+npm run generate:training-planner:azdo -- https://the360insights.ai/
+```
+
+Optional focused Azure DevOps variables:
+
+- `AZDO_TRAINING_PLANNER_PLAN_NAME`
+- `AZDO_TRAINING_PLANNER_SUITE_NAME`
+- `AZDO_TRAINING_PLANNER_PLAN_ID`
+- `AZDO_TRAINING_PLANNER_SUITE_ID`
+
+Behavior:
+
+- if no focused plan/suite ids are provided, a new Training Planner plan + suite are created
+- if only `AZDO_TRAINING_PLANNER_PLAN_ID` is provided, a new suite is created under that plan
+- if both focused ids are provided, the generated cases are added into that existing suite
+
 ## Azure Pipelines flow
 
 The Azure pipeline now has two stages:

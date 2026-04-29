@@ -751,3 +751,55 @@ export function generateGroundedWebsiteTestCases(websiteBrief, options = {}) {
     testCases: limited,
   };
 }
+
+export function generateFocusedGroundedModuleTestCases(websiteBrief, moduleName, options = {}) {
+  const targetModule = cleanText(moduleName || "");
+  if (!targetModule) {
+    throw new Error("A module name is required.");
+  }
+
+  const sourceSuite = generateGroundedWebsiteTestCases(websiteBrief, {
+    ...options,
+    maxCases: Math.max(50, Number(options.maxCases || 100) || 100),
+  });
+
+  const targetModuleLower = targetModule.toLowerCase();
+  const targetRoute = cleanText(
+    sourceSuite.testCases.find((item) => cleanText(item?.module).toLowerCase() === targetModuleLower)?.route ||
+      ""
+  );
+
+  const filtered = [];
+  for (const testCase of sourceSuite.testCases) {
+    const normalizedTitle = cleanText(testCase?.title);
+    const normalizedModule = cleanText(testCase?.module).toLowerCase();
+    const normalizedRoute = cleanText(testCase?.route);
+
+    const matchesAuthSmoke = normalizedTitle === "Auth smoke: login reaches the protected application shell";
+    const matchesModule = normalizedModule === targetModuleLower;
+    const matchesRoute = Boolean(targetRoute && normalizedRoute && normalizedRoute === targetRoute);
+
+    if (matchesAuthSmoke || matchesModule || matchesRoute) {
+      filtered.push(testCase);
+    }
+  }
+
+  const limited = filtered
+    .slice(0, Math.max(1, Number(options.focusedMaxCases || filtered.length || 1)))
+    .map((item, index) => ({
+      ...item,
+      id: toId(index),
+    }));
+
+  return {
+    websiteUrl: sourceSuite.websiteUrl,
+    websiteTitle: sourceSuite.websiteTitle,
+    summary: cleanText(
+      `Focused grounded authenticated suite generated for ${targetModule} with ${limited.length} cases.`
+    ),
+    generationSource: "grounded-authenticated-discovery-focused-module",
+    generatedAt: new Date().toISOString(),
+    targetModule,
+    testCases: limited,
+  };
+}
